@@ -1,13 +1,17 @@
 package br.com.simple.endpoint;
 
-import br.com.simple.error.CustomErrorType;
 import br.com.simple.error.ResourceNotFoundException;
 import br.com.simple.model.Student;
 import br.com.simple.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("students")
@@ -26,9 +30,8 @@ public class StudentEndpoint {
 
     //@RequestMapping(method = RequestMethod.GET)
     @GetMapping
-    public ResponseEntity<?> listAll(){
-        //System.out.println(dateUtil.formatLocalDateTimeToDatabaseStyle(LocalDateTime.now()));
-        return new ResponseEntity<>(studentDAO.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> listAll(Pageable pageable){
+        return new ResponseEntity<>(studentDAO.findAll(pageable), HttpStatus.OK);
     }
 
     //@RequestMapping(method = RequestMethod.GET, path = "/{id}")
@@ -41,13 +44,17 @@ public class StudentEndpoint {
 
     //@RequestMapping(method = RequestMethod.POST)
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody Student student){
+
+//    Evita a inserção na base quando uma exception é lançada. Não funciona com todos os tipos
+    @Transactional
+    public ResponseEntity<?> save(@Valid @RequestBody Student student){ //@Valid comba com @NotEmpty no model
         // Após fazer a requisição desejo continuar visualizando as informações do objeto criado
         return new ResponseEntity<>(studentDAO.save(student), HttpStatus.CREATED);
     }
 
     //@RequestMapping(method = RequestMethod.DELETE)
     @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> delete(@PathVariable Long id){
         verifyIfStudentExists(id);
         studentDAO.delete(id);

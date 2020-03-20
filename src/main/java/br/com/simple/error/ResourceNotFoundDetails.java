@@ -1,35 +1,9 @@
 package br.com.simple.error;
 
 //Padronização do corpo da mensagem de erro. Pode ser visto no Postman
-public class ResourceNotFoundDetails {
-    private String title;
-    private int status;
-    private String details;
-    private long timestamp;
-    private String developerMessage;
+public class ResourceNotFoundDetails extends ErrorDetails {
 
     private ResourceNotFoundDetails() {
-    }
-
-
-    public String getTitle() {
-        return title;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public String getDeveloperMessage() {
-        return developerMessage;
     }
 
     public static final class Builder {
@@ -73,11 +47,11 @@ public class ResourceNotFoundDetails {
 
         public ResourceNotFoundDetails build() {
             ResourceNotFoundDetails resourceNotFoundDetails = new ResourceNotFoundDetails();
-            resourceNotFoundDetails.status = this.status;
-            resourceNotFoundDetails.details = this.details;
-            resourceNotFoundDetails.title = this.title;
-            resourceNotFoundDetails.timestamp = this.timestamp;
-            resourceNotFoundDetails.developerMessage = this.developerMessage;
+            resourceNotFoundDetails.setStatus(this.status);
+            resourceNotFoundDetails.setDetails(this.details);
+            resourceNotFoundDetails.setTitle(this.title);
+            resourceNotFoundDetails.setTimestamp(this.timestamp);
+            resourceNotFoundDetails.setDeveloperMessage(this.developerMessage);
             return resourceNotFoundDetails;
         }
     }
